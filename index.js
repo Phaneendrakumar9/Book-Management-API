@@ -211,4 +211,80 @@ booky.post("/publication/add",(req,res)=>{
     return res.json({Publication:database.publication});
 });
 
+/* 
+Route              /book/update/title
+Description        Updating Book title based on ISBN
+Access             PUBLIC
+Parameter          ISBN
+Methods            PUT
+*/
+booky.put("/book/update/title/:ISBN",(req,res)=>{
+database.books.forEach((book)=>{
+    if(book.ISBN===req.params.ISBN){
+       book.title=req.body.newBookTitle;
+       return;
+    }
+});
+return res.json({books:database.books});
+});
+
+/* 
+Route              /book/update/author
+Description        Updating/add new author for Book
+Access             PUBLIC
+Parameter          ISBN
+Methods            PUT
+*/
+
+booky.put("/book/update/author/:ISBN/:authorId",(req,res)=>{
+   //Updating Book Database
+    database.books.forEach((book)=>{
+        if(book.ISBN===req.params.ISBN){
+            return book.author.push(parseInt(req.params.authorId));
+        }
+    });
+    //Update Author database
+    database.author.forEach((author)=>{
+        if(author.id===parseInt(req.params.authorId)){
+            return author.books.push(req.params.ISBN);
+        }
+    });
+    return res.json({Books:database.books,author:database.author})
+});
+
+/* 
+Route              /author/update/name
+Description        Updating author name based on id
+Access             PUBLIC
+Parameter          Id
+Methods            PUT
+*/
+
+booky.put("/author/update/name/:id",(req,res)=>{
+    database.author.forEach((author)=>{
+        if(author.id===req.params.id){
+           author.name=req.body.newAuthorName;
+           return;
+        }
+    });
+    return res.json({Author:database.author});
+    });
+
+/* 
+Route              /publication/update/name
+Description        Updating publication name based on id
+Access             PUBLIC
+Parameter          Id
+Methods            PUT
+*/
+booky.put("/publication/update/name/:id",(req,res)=>{
+    database.publication.forEach((publication)=>{
+        if(publication.id===req.params.id){
+            publication.name=req.body.newPublicationName;
+           return;
+        }
+    });
+    return res.json({publication:database.publication});
+    });
+
 booky.listen(3000,()=>console.log("Server is Running successfully"));
