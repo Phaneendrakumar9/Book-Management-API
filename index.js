@@ -287,4 +287,38 @@ booky.put("/publication/update/name/:id",(req,res)=>{
     return res.json({publication:database.publication});
     });
 
+/* 
+Route              /publication/update/book
+Description        Updating/add new book to a publication
+Access             PUBLIC
+Parameter          ISBN
+Methods            PUT
+*/
+
+booky.put("/publication/update/book/:ISBN",(req,res)=>{
+     //Updating the publication database
+     database.publication.forEach((publication)=>{
+      if(publication.id===req.body.pubId){
+         return publication.books.push(req.params.ISBN);
+      }
+     });
+    //Updating the book database
+     database.books.forEach((book)=>{
+         if(book.ISBN===req.params.ISBN){
+             book.publication=req.body.pubId;
+             return;
+         }
+     })
+     return res.json({Books:database.books,Publications:database.publication,message:"Successfully updated Database"})
+});
+
+
+
+
+
+
+
+
+
+
 booky.listen(3000,()=>console.log("Server is Running successfully"));
