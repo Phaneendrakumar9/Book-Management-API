@@ -4,7 +4,13 @@ const express=require("express");
 const mongoose=require("mongoose");
 
 //Database
-const database=require("./database");
+const database=require("./database/index");
+
+//Models
+const BookModels=require("./database/book");
+const AuthorModels=require("./database/author");
+const PublicationModel=require("./database/publication");
+
 
 // Initialisation
 const booky=express();
