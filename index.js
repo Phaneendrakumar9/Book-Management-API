@@ -278,20 +278,46 @@ Parameter          ISBN
 Methods            PUT
 */
 
-booky.put("/book/update/author/:ISBN/:authorId",(req,res)=>{
+booky.put("/book/update/author/:ISBN/:authorId",async (req,res)=>{
    //Updating Book Database
-    database.books.forEach((book)=>{
-        if(book.ISBN===req.params.ISBN){
-            return book.author.push(parseInt(req.params.authorId));
-        }
-    });
-    //Update Author database
-    database.author.forEach((author)=>{
-        if(author.id===parseInt(req.params.authorId)){
-            return author.books.push(req.params.ISBN);
-        }
-    });
-    return res.json({Books:database.books,author:database.author})
+   const updatedBook=await BookModel.findOneAndUpdate({
+       ISBN:req.params.ISBN
+   },
+   {
+   $addToSet:{
+       author:req.body.newAuthor
+   }
+   },
+   {
+       new:true
+   });
+   const updatedAuthor=await AuthorModel.findOneAndUpdate({
+       id:req.body.newAuthor
+   },
+   {
+       $push:{
+           books:req.params.ISBN
+       }
+   },
+   {
+       new:true
+   });
+
+
+
+
+    // database.books.forEach((book)=>{
+    //     if(book.ISBN===req.params.ISBN){
+    //         return book.author.push(parseInt(req.params.authorId));
+    //     }
+    // });
+    // //Update Author database
+    // database.author.forEach((author)=>{
+    //     if(author.id===parseInt(req.params.authorId)){
+    //         return author.books.push(req.params.ISBN);
+    //     }
+    // });
+    return res.json({Books:updatedBook,author:updatedAuthor})
 });
 
 /* 
