@@ -252,14 +252,22 @@ Access             PUBLIC
 Parameter          ISBN
 Methods            PUT
 */
-booky.put("/book/update/title/:ISBN",(req,res)=>{
-database.books.forEach((book)=>{
-    if(book.ISBN===req.params.ISBN){
-       book.title=req.body.newBookTitle;
-       return;
-    }
-});
-return res.json({books:database.books});
+booky.put("/book/update/title/:ISBN",async (req,res)=>{
+  const updatedBook=await BookModel.findOneAndUpdate({ISBN:req.params.ISBN},
+    {
+        title:req.body.newBookTitle
+
+    },
+    {
+        new:true
+    });
+// database.books.forEach((book)=>{
+//     if(book.ISBN===req.params.ISBN){
+//        book.title=req.body.newBookTitle;
+//        return;
+//     }
+// });
+return res.json({books:updatedBook});
 });
 
 /* 
